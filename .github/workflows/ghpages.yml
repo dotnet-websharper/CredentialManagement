@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout
@@ -20,12 +20,11 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Add GitHub registry NuGet source
-        shell: cmd
         run: |
-          dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json ^
-          --name github ^
-          --username intellifactory-gh ^
-          --password "${{ secrets.PAT_PACKAGE }}" ^
+          dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json \
+          --name github \
+          --username intellifactory-gh \
+          --password "${{ secrets.PAT_PACKAGE }}" \
           --store-password-in-clear-text
 
       - name: Build WebSharper Project
