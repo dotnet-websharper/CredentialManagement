@@ -19,6 +19,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Cache NuGet Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Add GitHub registry NuGet source
         run: |
           dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json \
@@ -30,7 +38,10 @@ jobs:
       - name: Restore NuGet Packages
         run: dotnet restore WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj
 
-      - name: Build WebSharper Project
+      - name: Build Binding Project
+        run: dotnet build WebSharper.CredentialManagement/WebSharper.CredentialManagement.fsproj --configuration Release --no-restore -maxcpucount:1
+
+      - name: Build Sample Project
         run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release --no-restore -maxcpucount:1
 
       - name: Prepare Deployment
