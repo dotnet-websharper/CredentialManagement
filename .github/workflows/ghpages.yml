@@ -39,10 +39,10 @@ jobs:
         run: dotnet restore WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj
 
       - name: Build Binding Project
-        run: dotnet build WebSharper.CredentialManagement/WebSharper.CredentialManagement.fsproj --configuration Release --no-restore -maxcpucount:1
+        run: dotnet build WebSharper.CredentialManagement/WebSharper.CredentialManagement.fsproj --configuration Release --verbosity detailed
 
       - name: Build Sample Project
-        run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release --no-restore -maxcpucount:1
+        run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release --verbosity detailed
 
       - name: Prepare Deployment
         run: |
