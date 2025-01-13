@@ -14,10 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup .NET 6
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.0.x'
 
       - name: Add GitHub registry NuGet source
         run: |
@@ -27,8 +27,11 @@ jobs:
           --password "${{ secrets.PAT_PACKAGE }}" \
           --store-password-in-clear-text
 
+      - name: Restore NuGet Packages
+        run: dotnet restore WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj
+
       - name: Build WebSharper Project
-        run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release
+        run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release --no-restore -maxcpucount:1
 
       - name: Prepare Deployment
         run: |
