@@ -99,12 +99,11 @@ module Definition =
 
     let PasswordCredentialData =
         Pattern.Config "PasswordCredentialData" {
-            Required = [
+            Required = []
+            Optional = [
                 "id", T<string>         
                 "password", T<string>   
-                "origin", T<string>     
-            ]
-            Optional = [
+                "origin", T<string> 
                 "iconURL", T<string>    
                 "name", T<string>       
             ]
@@ -185,16 +184,16 @@ module Definition =
     let CredentialsContainer = 
         Class "CredentialsContainer"
         |+> Instance [
-            "create" => !?CreateOptions?options ^-> T<Promise<_>>[
-                    FederatedCredential.Type
-                    + PasswordCredential.Type
+            "create" => !?CreateOptions?options ^-> T<Promise<_>>.[
+                    FederatedCredential
+                    + PasswordCredential
                     //+ T<PublicKeyCredential>
                 ]
-            "get" => !?CredentialRequestOptions?options ^-> T<Promise<_>>[
-                    PasswordCredential.Type
-                    + IdentityCredential.Type
-                    + FederatedCredential.Type
-                    + OTPCredential.Type
+            "get" => !?CredentialRequestOptions?options ^-> T<Promise<_>>.[
+                    PasswordCredential
+                    + IdentityCredential
+                    + FederatedCredential
+                    + OTPCredential
                     //+ T<PublicKeyCredential>
                 ]
             "preventSilentAccess" => T<unit> ^-> T<Promise<unit>>
@@ -207,6 +206,12 @@ module Definition =
             "credentials" =? CredentialsContainer
         ]
 
+    let CredentialManagement = 
+        Class "CredentialManagement"
+        |+> Static [
+            "navigator" =? Navigator
+        ]
+
     let Assembly =
         Assembly [
             Namespace "WebSharper.CredentialManagement" [
@@ -214,6 +219,7 @@ module Definition =
                 Enum.Context
                 Enum.Mediation
 
+                CredentialManagement
                 Navigator
                 CredentialsContainer
                 OTPCredential

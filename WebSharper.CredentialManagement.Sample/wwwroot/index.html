@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Credential Management API Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="Content/WebSharper.CredentialManagement.Sample.css" />
+    <style>
+        /* Don't show the not-yet-loaded templates */
+        [ws-template], [ws-children-template] {
+            display: none;
+        }
+    </style>
+    <script type="module" src="Content/WebSharper.CredentialManagement.Sample.head.js"></script>
+</head>
+<body>
+    <h1>Credential Management API Example</h1>
+    <div id="main" ws-children-template="Main" >
+        <form id="loginForm" ws-onclick="Submit" ws-onafterrender="formInit">
+            <label >Username:</label>
+            <input ws-var="Username" type="text" id="username" required >
+            <br><br>
+            <label >Password:</label>
+            <input ws-var="Password" type="password" id="password" required>
+            <br><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <script type="module" src="Content/WebSharper.CredentialManagement.Sample.min.js"></script>
+</body>
+</html>
