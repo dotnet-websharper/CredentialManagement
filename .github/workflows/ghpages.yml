@@ -29,17 +29,19 @@ jobs:
             --store-password-in-clear-text
 
       - name: Restore Dependencies
-        run: dotnet restore WebSharper.CredentialManagement.Sample
+        run: dotnet restore
+        working-directory: WebSharper.CredentialManagement.Sample
 
       - name: Build WebSharper Project
-        run: dotnet build WebSharper.CredentialManagement.Sample --configuration Release
+        run: dotnet build --configuration Release --no-restore
+        working-directory: WebSharper.CredentialManagement.Sample
 
       - name: Install Vite
         run: npm install -g vite
 
       - name: Build Static Files with Vite
         run: npx vite build --outDir ../dist --base ./
-        working-directory: WebSharper.CredentialManagement.Sample/wwwroot/
+        working-directory: WebSharper.CredentialManagement.Sample/wwwroot
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@releases/v3
