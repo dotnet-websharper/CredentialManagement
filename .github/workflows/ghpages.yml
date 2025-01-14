@@ -33,7 +33,7 @@ jobs:
         working-directory: WebSharper.CredentialManagement.Sample
 
       - name: Build WebSharper Project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build 
         working-directory: WebSharper.CredentialManagement.Sample
 
       - name: Install Vite
