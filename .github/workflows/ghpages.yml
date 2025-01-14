@@ -20,17 +20,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
-
-      - name: Cache NuGet Packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
       - name: Add GitHub registry NuGet source
         run: |
           dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json \
@@ -39,20 +28,16 @@ jobs:
             --password "${{ secrets.PAT_PACKAGE }}" \
             --store-password-in-clear-text
 
-      - name: Restore Dependencies with Logs
-        run: dotnet restore --verbosity detailed
-        working-directory: WebSharper.CredentialManagement.Sample
-
-      - name: Clean Build Artifacts
-        run: dotnet clean
-        working-directory: WebSharper.CredentialManagement.Sample
-
-      - name: Build WebSharper Project with Logs
-        run: dotnet build --configuration Release --verbosity detailed
-        working-directory: WebSharper.CredentialManagement.Sample
-
       - name: Install Vite
         run: npm install -g vite
+
+      - name: Build Binding Project 
+        run: dotnet build 
+        working-directory: WebSharper.CredentialManagement
+
+      - name: Build Sample Project 
+        run: dotnet build 
+        working-directory: WebSharper.CredentialManagement.Sample      
 
       - name: Build Static Files with Vite
         run: npx vite build --outDir ../dist --base ./
