@@ -20,6 +20,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Cache NuGet Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Add GitHub registry NuGet source
         run: |
           dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json \
@@ -32,8 +40,8 @@ jobs:
         run: dotnet restore
         working-directory: WebSharper.CredentialManagement.Sample
 
-      - name: Build WebSharper Project
-        run: dotnet build 
+      - name: Build WebSharper Project with Logs
+        run: dotnet build --configuration Release --verbosity detailed
         working-directory: WebSharper.CredentialManagement.Sample
 
       - name: Install Vite
