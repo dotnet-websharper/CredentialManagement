@@ -53,16 +53,14 @@ module Client =
                     Console.Log("Retrieved credentials:", credential)
                 
                     // Check if Id and Password are valid before assigning
-                    if not (isNull credential.Id) then
+                    if not (isNull credential.Id) && not (isNull credential.Password) then
                         Console.Log($"Credential id: {credential.Id}")
-                        username.Value <- credential.Id
-                    else
-                        Console.Log("Credential Id is undefined.")
-
-                    if not (isNull credential.Password) then
                         Console.Log($"Credential Password: {credential.Password}")
+
+                        username.Value <- credential.Id
                         password.Value <- credential.Password
                     else
+                        Console.Log("Credential Id is undefined.")
                         Console.Log("Credential Password is undefined.")
                 else
                     Console.Log("No stored credentials found.")
