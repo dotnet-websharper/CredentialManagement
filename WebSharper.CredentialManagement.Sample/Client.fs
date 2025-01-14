@@ -17,25 +17,28 @@ module Client =
     let username = Var.Create ""
     let password = Var.Create ""
 
-
     let credentialsContainer = As<Navigator>(JS.Window.Navigator).Credentials
+
     // Save credentials using the Credential Management API
     let saveCredentials (username: string) (password: string) =
         promise {
+            Console.Log($"Attempting to save credentials for username: {username}")
+        
             let passwordCredentialData = PasswordCredentialData(
                 Id = username,
                 Password = password,
                 Name = username
             )
-            
+        
             let credential = new PasswordCredential(passwordCredentialData)
-            
+        
             try
+                Console.Log("Before storing credential:", credential)
                 do! credentialsContainer.Store(credential) |> Promise.AsAsync
-                Console.Log("Credentials saved!")
+                Console.Log("Credentials stored successfully!")
             with ex ->
                 Console.Error($"Failed to save credentials: {ex.Message}")
-        }
+        } 
 
     let retrieveCredentials () =
         promise {
@@ -69,13 +72,15 @@ module Client =
 
     let handleLoginFormSubmit (event: Dom.Event) =
         promise {
-            event.PreventDefault() 
-
-            // Save credentials
-            do! saveCredentials username.Value password.Value
-
-            // Simulate successful login
-            JS.Alert("Logged in successfully!")
+            event.PreventDefault()
+            let usernameValue = username.Value
+            let passwordValue = password.Value
+            
+            if not (System.String.IsNullOrWhiteSpace(usernameValue) || System.String.IsNullOrWhiteSpace(passwordValue)) then
+                do! saveCredentials usernameValue passwordValue
+                JS.Alert("Logged in successfully!")
+            else
+                JS.Alert("Please fill in both username and password.")
         }
 
     [<SPAEntryPoint>]
