@@ -1,69 +1,46 @@
-name: Build and Deploy
+name: Build and Deploy to GitHub Pages
+
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-          submodules: true
 
-      - name: Clear NuGet Cache
-        run: dotnet nuget locals all --clear
-
-      - name: Cache NuGet Packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Setup .NET
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
 
       - name: Add GitHub registry NuGet source
+        shell: cmd
         run: |
-          dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json \
-            --name github \
-            --username intellifactory-gh \
-            --password "${{ secrets.PAT_PACKAGE }}" \
-            --store-password-in-clear-text
+          dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json ^
+          --name github ^
+          --username intellifactory-gh ^
+          --password "${{ secrets.PAT_PACKAGE }}" ^
+          --store-password-in-clear-text
 
-      - name: Install Vite
-        run: npm install -g vite
+      - name: Build WebSharper Project
+        run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release
 
-      - name: Restore Binding Project Dependencies
-        run: dotnet restore --verbosity minimal
-        working-directory: WebSharper.CredentialManagement
+      - name: Install rsync
+        run: choco install rsync -y
 
-      - name: Build Binding Project with Limited Parallelism
-        run: dotnet build --configuration Release --verbosity diagnostic --no-restore -maxcpucount:1
-        working-directory: WebSharper.CredentialManagement
-
-      - name: Restore Sample Project Dependencies
-        run: dotnet restore --verbosity minimal
-        working-directory: WebSharper.CredentialManagement.Sample
-
-      - name: Build Sample Project with Limited Parallelism
-        run: dotnet build --configuration Release --verbosity diagnostic --no-restore -maxcpucount:1
-        working-directory: WebSharper.CredentialManagement.Sample
-
-      - name: Build Static Files with Vite
-        run: npx vite build --outDir ../dist --base ./ 
-        working-directory: WebSharper.CredentialManagement.Sample/wwwroot/
+      - name: Prepare Deployment
+        run: |
+          mkdir -p dist
+          cp -r WebSharper.CredentialManagement.Sample/wwwroot/* dist/
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
