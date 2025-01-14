@@ -29,10 +29,10 @@ jobs:
             --store-password-in-clear-text
 
       - name: Restore Dependencies
-        run: dotnet restore WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj
+        run: dotnet restore WebSharper.CredentialManagement.Sample
 
       - name: Build WebSharper Project
-        run: dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj --configuration Release
+        run: dotnet build WebSharper.CredentialManagement.Sample --configuration Release
 
       - name: Install Vite
         run: npm install -g vite
