@@ -36,8 +36,13 @@ jobs:
           mkdir -p dist
           cp -r WebSharper.CredentialManagement.Sample/wwwroot/* dist/
 
-      - name: Deploy 🚀
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
+      - name: Manual Deployment to GitHub Pages
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout --orphan gh-pages
+          git rm -rf .
+          cp -r dist/* .
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push -f origin gh-pages
