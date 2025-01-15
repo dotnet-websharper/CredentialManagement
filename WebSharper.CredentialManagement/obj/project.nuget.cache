@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "NOaqFO/6Els=",
+  "success": true,
+  "projectFilePath": "D:\\a\\CredentialManagement\\CredentialManagement\\WebSharper.CredentialManagement\\WebSharper.CredentialManagement.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\runneradmin\\.nuget\\packages\\fsharp.core\\8.0.403\\fsharp.core.8.0.403.nupkg.sha512",
+    "C:\\Users\\runneradmin\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\runneradmin\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512",
+    "C:\\Users\\runneradmin\\.nuget\\packages\\system.reflection.emit.ilgeneration\\4.7.0\\system.reflection.emit.ilgeneration.4.7.0.nupkg.sha512",
+    "C:\\Users\\runneradmin\\.nuget\\packages\\system.reflection.emit.lightweight\\4.7.0\\system.reflection.emit.lightweight.4.7.0.nupkg.sha512",
+    "C:\\Users\\runneradmin\\.nuget\\packages\\websharper\\8.0.0.487-beta1\\websharper.8.0.0.487-beta1.nupkg.sha512",
+    "C:\\Users\\runneradmin\\.nuget\\packages\\websharper.fsharp\\8.0.0.487-beta1\\websharper.fsharp.8.0.0.487-beta1.nupkg.sha512"
+  ],
+  "logs": []
+}

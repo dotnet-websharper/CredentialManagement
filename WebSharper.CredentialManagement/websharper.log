@@ -1,0 +1,10 @@
+2025-01-15 03:09:56.4228|DEBUG|Program|location of wsfscservice is: C:\Users\runneradmin\.nuget\packages\websharper.fsharp\8.0.0.487-beta1\tools\net8.0\win-x64 (server side)
+2025-01-15 03:09:56.4228|DEBUG|Program|pipename is: C:\Users\runneradmin\.nuget\packages\websharper.fsharp\8.0.0.487-beta1\tools\net8.0\win-x64 (server side)
+2025-01-15 03:09:56.4382|DEBUG|Program|Compiling D:\a\CredentialManagement\CredentialManagement\WebSharper.CredentialManagement\WebSharper.CredentialManagement.fsproj
+2025-01-15 03:09:59.2570|TRACE|Program|Server sends: n: F# compilation: 00:00:02.8802600
+2025-01-15 03:09:59.3392|TRACE|Program|Server sends: n: Loading IExtension implementation: 00:00:00.0858471
+2025-01-15 03:09:59.3657|TRACE|Program|Server sends: n: Getting Assembly definition: 00:00:00.0264907
+2025-01-15 03:09:59.6277|TRACE|Program|Server sends: n: Built assembly: 00:00:00.2619750
+2025-01-15 03:09:59.9581|TRACE|Program|Server sends: n: Creating WebSharper metadata: 00:00:00.3304559
+2025-01-15 03:10:00.0094|TRACE|Program|Server sends: n: Writing final dll: 00:00:00.0512650
+2025-01-15 03:10:00.0094|TRACE|Program|Server sends: x: 0
