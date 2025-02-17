@@ -7,6 +7,7 @@ This repository offers an F# [WebSharper](https://websharper.com/) binding for t
 The repository consists of two main projects:
 
 1. **Binding Project**:
+
    - Contains the F# WebSharper binding for the Credential Management API.
 
 2. **Sample Project**:
@@ -24,8 +25,6 @@ The repository consists of two main projects:
 ### Prerequisites
 
 - [.NET SDK](https://dotnet.microsoft.com/download) installed on your machine.
-- Node.js and npm (for building web assets).
-- WebSharper tools.
 
 ### Steps
 
@@ -105,10 +104,10 @@ module Client =
                     Mediation = Mediation.Optional
                 )
 
-                let! credential = As<Promise<PasswordCredential>> <| credentialsContainer.Get(credentialRequestOptions) 
+                let! credential = As<Promise<PasswordCredential>> <| credentialsContainer.Get(credentialRequestOptions)
                 if not (isNull credential) then
                     Console.Log("Retrieved credentials:", credential)
-                
+
                     // Check if Id and Password are valid before assigning
                     // This ensures only valid and non-null data is used, avoiding potential runtime errors
                     if not (isNull credential.Id) && not (isNull credential.Password) then
