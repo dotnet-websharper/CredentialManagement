@@ -200,18 +200,6 @@ module Definition =
             "store" => Credential?credentials ^-> T<Promise<unit>>
         ]
 
-    let Navigator =
-        Class "Navigator"
-        |+> Instance [
-            "credentials" =? CredentialsContainer
-        ]
-
-    let CredentialManagement = 
-        Class "CredentialManagement"
-        |+> Static [
-            "navigator" =? Navigator
-        ]
-
     let Assembly =
         Assembly [
             Namespace "WebSharper.CredentialManagement" [
@@ -219,8 +207,6 @@ module Definition =
                 Enum.Context
                 Enum.Mediation
 
-                CredentialManagement
-                Navigator
                 CredentialsContainer
                 OTPCredential
                 IdentityCredential

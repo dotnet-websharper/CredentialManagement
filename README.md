@@ -92,7 +92,7 @@ module Client =
     let password = Var.Create ""
 
     // Retrieves the browser's credentials container, providing access to the Credential Management API
-    let credentialsContainer = As<Navigator>(JS.Window.Navigator).Credentials
+    let credentialsContainer = JS.Window.Navigator.Credentials
 
     // This function retrieves credentials from the browser's Credential Management API
     let retrieveCredentials () =

@@ -17,7 +17,7 @@ module Client =
     let username = Var.Create ""
     let password = Var.Create ""
 
-    let credentialsContainer = As<Navigator>(JS.Window.Navigator).Credentials
+    let credentialsContainer = JS.Window.Navigator.Credentials
 
     // Save credentials using the Credential Management API
     let saveCredentials (username: string) (password: string) =
