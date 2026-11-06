@@ -1,147 +1,108 @@
 # WebSharper Credential Management API Binding
 
-This repository offers an F# [WebSharper](https://websharper.com/) binding for the [Credential Management API](https://developer.mozilla.org/en-US/docs/Web/API/Credential_Management_API). By leveraging this API, developers can streamline user authentication and securely manage credentials in web applications, all while integrating seamlessly into WebSharper projects.
+[![NuGet](https://img.shields.io/nuget/v/WebSharper.CredentialManagement.svg)](https://www.nuget.org/packages/WebSharper.CredentialManagement)
 
-## Repository Structure
+This repository provides an F# [WebSharper](https://websharper.com/) binding for the [Credential Management API](https://developer.mozilla.org/en-US/docs/Web/API/Credential_Management_API), exposing password, federated, one-time-password and public-key credentials to WebSharper applications.
 
-The repository consists of two main projects:
+> **Browser support and secure context:** The Credential Management API is only exposed in [secure contexts](https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Secure_Contexts) (HTTPS or localhost), and browser support varies. Check [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Credential_Management_API) for the current compatibility matrix. The sample reports when the API is unavailable instead of failing silently.
 
-1. **Binding Project**:
+## Repository structure
 
-   - Contains the F# WebSharper binding for the Credential Management API.
+The repository contains three projects:
 
-2. **Sample Project**:
-   - Demonstrates how to use the Credential Management API with WebSharper syntax.
-   - Includes a GitHub Pages demo: [View Demo](https://dotnet-websharper.github.io/CredentialManagement/).
+| Project | What it is |
+| --- | --- |
+| `WebSharper.CredentialManagement` | The WIG binding: `CredentialsContainer`, `Credential`, `PasswordCredential`, `FederatedCredential`, `PublicKeyCredential`, `IdentityCredential`, `OTPCredential` and their option types. |
+| `WebSharper.CredentialManagement.Extensions` | Hand-written `[<Inline>]` code — currently the `Navigator.Credentials` extension property. |
+| `WebSharper.CredentialManagement.Sample` | An ASP.NET Core SPA that exercises the binding end to end. See [Running the test case](#running-the-test-case). |
 
-## Features
+## Live demos
 
-- WebSharper bindings for the Credential Management API.
-- Example usage through the Sample project.
-- Hosted demo to explore API functionality.
+- Binding sample (GitHub Pages): <https://dotnet-websharper.github.io/CredentialManagement/>
+- Source: <https://github.com/dotnet-websharper/CredentialManagement>
+- WebSharper bindings catalog: <https://websharper.com/bindings>
 
-## Installation and Building
+## Installation
 
-### Prerequisites
+```bash
+dotnet add package WebSharper.CredentialManagement
+```
 
-- [.NET SDK](https://dotnet.microsoft.com/download) installed on your machine.
+The package targets `netstandard2.0` and works with any WebSharper 10 project.
 
-### Steps
+## Usage
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/dotnet-websharper/CredentialManagement.git
-   cd CredentialManagement
-   ```
-
-2. Build the Binding Project:
-
-   ```bash
-   dotnet build WebSharper.CredentialManagement/WebSharper.CredentialManagement.fsproj
-   ```
-
-3. Build and Run the Sample Project:
-
-   ```bash
-   cd WebSharper.CredentialManagement.Sample
-   dotnet build
-   dotnet run
-   ```
-
-4. Open the hosted demo to see the Sample project in action:
-   [https://dotnet-websharper.github.io/CredentialManagement/](https://dotnet-websharper.github.io/CredentialManagement/)
-
-## Why Use the Credential Management API
-
-The Credential Management API is a browser-native solution that simplifies credential management in modern web applications. Key benefits include:
-
-1. **Unified Authentication**: Handles passwords, federated logins, and public key credentials in a single API.
-2. **Enhanced Security**: Minimizes phishing risks by reducing manual credential entry and supports passwordless sign-in with WebAuthn.
-3. **User Convenience**: Streamlines the login process with automatic sign-in and retrieval of stored credentials.
-4. **Standardized Approach**: Provides a consistent, browser-native way to manage credentials across different platforms.
-
-Integrating the Credential Management API with WebSharper allows developers to create secure, user-friendly authentication flows in F# web applications.
-
-## How to Use the Credential Management API
-
-### Overview
-
-The Credential Management API enables secure and user-friendly authentication by providing a standardized way to handle credentials. By integrating this API, you can enhance user experience and security in your WebSharper applications.
-
-### Example Usage
-
-The Credential Management API allows seamless handling of user credentials in web applications. Below is an example of how to use it with WebSharper:
+All types live in the `WebSharper.CredentialManagement` namespace. `JS.Window.Navigator.Credentials` gives you the browser's `CredentialsContainer`; `get`, `create`, `store` and `preventSilentAccess` return `Promise`s.
 
 ```fsharp
 open WebSharper
 open WebSharper.JavaScript
-open WebSharper.UI
-open WebSharper.UI.Client
-open WebSharper.UI.Templating
 open WebSharper.CredentialManagement
 
-// Define the connection to the HTML template
-// `IndexTemplate` binds to `wwwroot/index.html` and enables dynamic updates to the UI
-
-type IndexTemplate = Template<"wwwroot/index.html", ClientLoad.FromDocument>
-
 [<JavaScript>]
-module Client =
-    let username = Var.Create ""
-    let password = Var.Create ""
+let saveAndLoad () =
+    promise {
+        let container = JS.Window.Navigator.Credentials
 
-    // Retrieves the browser's credentials container, providing access to the Credential Management API
-    let credentialsContainer = JS.Window.Navigator.Credentials
+        // Store a password credential.
+        let data = PasswordCredentialData(Id = "alice", Password = "s3cret", Name = "Alice")
+        let credential = new PasswordCredential(data)
+        do! container.Store(credential) |> Promise.AsAsync
 
-    // This function retrieves credentials from the browser's Credential Management API
-    let retrieveCredentials () =
-        promise {
-            try
-                // Sets up options for retrieving credentials, specifying that passwords are included and mediation is optional
-                let credentialRequestOptions = CredentialRequestOptions(
-                    Password = true,
-                    Mediation = Mediation.Optional
-                )
+        // Ask the browser for a stored password credential.
+        let options = CredentialRequestOptions(Password = true, Mediation = Mediation.Optional)
+        let! found = As<Promise<PasswordCredential>> <| container.Get(options)
 
-                let! credential = As<Promise<PasswordCredential>> <| credentialsContainer.Get(credentialRequestOptions)
-                if not (isNull credential) then
-                    Console.Log("Retrieved credentials:", credential)
-
-                    // Check if Id and Password are valid before assigning
-                    // This ensures only valid and non-null data is used, avoiding potential runtime errors
-                    if not (isNull credential.Id) && not (isNull credential.Password) then
-                        Console.Log($"Credential id: {credential.Id}")
-                        Console.Log($"Credential Password: {credential.Password}")
-
-                        username.Value <- credential.Id
-                        password.Value <- credential.Password
-                    else
-                        Console.Log("Credential Id is undefined.")
-                        Console.Log("Credential Password is undefined.")
-                else
-                    Console.Log("No stored credentials found.")
-            with ex ->
-                Console.Error($"Failed to retrieve credentials: {ex.Message}")
-        }
-
-    [<SPAEntryPoint>]
-    let Main () =
-
-        // Auto-fill credentials on page load
-        async {
-            do! retrieveCredentials() |> Promise.AsAsync
-        }
-        |> Async.StartImmediate
-
-        // Binds the username and password variables to their corresponding fields in the HTML template
-        IndexTemplate.Main()
-            .Username(username.V)
-            .Password(password.V)
-            .Doc()
-        |> Doc.RunById "main"
+        if not (isNull found) then
+            Console.Log(found.Id)
+    }
 ```
 
-This example demonstrates how to retrieve credentials using the `navigator.credentials.get()` method, handle different credential types, and log the results or errors to the console.
+The binding also models `FederatedCredential` and `PublicKeyCredential` (WebAuthn). The full
+`PublicKeyCredentialCreationOptions` / `PublicKeyCredentialRequestOptions` object graphs are not
+typed yet; pass them as JavaScript objects through the `PublicKey` field of `CreateOptions` /
+`CredentialRequestOptions`.
 
-For a complete implementation, refer to the [Sample Project](https://dotnet-websharper.github.io/CredentialManagement/).
+> `requireUserMediation()` is the earlier spec name for `preventSilentAccess()`. It is kept for
+> source compatibility and marked obsolete; new code should call `preventSilentAccess()`.
+
+## Running the test case
+
+The sample doubles as the repository's test case. It covers:
+
+- feature-detecting `navigator.credentials` and `window.isSecureContext`, and reporting when the
+  API is unavailable;
+- loading a stored password credential on page load and binding it to the form's Vars;
+- storing a password credential through `credentials.store()` when the form is submitted;
+- rendering the outcome through a reactive `Var` instead of `alert()`.
+
+Build and run it:
+
+```bash
+cd WebSharper.CredentialManagement.Sample
+dotnet run
+```
+
+Then open the URL printed in the console. On `localhost` the page is a secure context; fill in a
+username and password and press **Login** to exercise the store/get round-trip. In browsers or
+origins where the API is unavailable, the status line explains why.
+
+## Building from source
+
+Prerequisites: [.NET SDK](https://dotnet.microsoft.com/download) 10.0 or later.
+
+```bash
+git clone https://github.com/dotnet-websharper/CredentialManagement.git
+cd CredentialManagement
+dotnet build WebSharper.CredentialManagement/WebSharper.CredentialManagement.fsproj
+dotnet build WebSharper.CredentialManagement.Sample/WebSharper.CredentialManagement.Sample.fsproj
+```
+
+## Deployment
+
+`.github/workflows/ghpages.yml` builds the sample in Release on every push to `main` and publishes
+`WebSharper.CredentialManagement.Sample/wwwroot` to GitHub Pages.
+
+## License
+
+Apache 2.0 — see the [WebSharper core repository](https://github.com/dotnet-websharper/core/blob/master/LICENSE.md).
