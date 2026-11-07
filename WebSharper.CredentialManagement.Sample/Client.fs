@@ -92,17 +92,20 @@ module Client =
             .Submit(fun e ->
                 e.Event.PreventDefault()
 
-                promise {
-                    let userName = username.Value
-                    let passWord = password.Value
+                if not (isSupported ()) then
+                    status.Value <- "The Credential Management API is unavailable. Use a modern browser over HTTPS or localhost."
+                else
+                    promise {
+                        let userName = username.Value
+                        let passWord = password.Value
 
-                    if System.String.IsNullOrWhiteSpace(userName) || System.String.IsNullOrWhiteSpace(passWord) then
-                        status.Value <- "Please fill in both username and password."
-                    else
-                        do! saveCredentials userName passWord
-                }
-                |> Promise.AsAsync
-                |> Async.StartImmediate
+                        if System.String.IsNullOrWhiteSpace(userName) || System.String.IsNullOrWhiteSpace(passWord) then
+                            status.Value <- "Please fill in both username and password."
+                        else
+                            do! saveCredentials userName passWord
+                    }
+                    |> Promise.AsAsync
+                    |> Async.StartImmediate
             )
             .Doc()
         |> Doc.RunById "main"
