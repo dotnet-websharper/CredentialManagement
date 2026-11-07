@@ -18,6 +18,12 @@ The repository contains three projects:
 
 ## Live demos
 
+**Try it live:** [Open the sample in your browser](https://dotnet-websharper.github.io/CredentialManagement/)
+
+![Credential Management API sample](docs/sample.png)
+
+The sample doubles as the binding's [test case](#running-the-test-case): it stores and retrieves password credentials, and degrades gracefully when the API is unavailable.
+
 - Binding sample (GitHub Pages): <https://dotnet-websharper.github.io/CredentialManagement/>
 - Source: <https://github.com/dotnet-websharper/CredentialManagement>
 - WebSharper bindings catalog: <https://websharper.com/bindings>
