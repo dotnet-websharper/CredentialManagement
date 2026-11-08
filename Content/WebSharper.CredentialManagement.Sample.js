@@ -48,12 +48,12 @@ function retrieveCredentials(){
     _1(new Promise((_2) => {
       let r;
       const credentialRequestOptions=(r={},r.password=true,r.mediation="optional",r);
-      let _3=credentialsContainer().get(credentialRequestOptions).then((d) =>!(d==null)?!(d.id==null)&&!(d.password==null)?(username().Set(d.id),password().Set(d.password),status().Set("Stored credentials loaded."),Promise.resolve(null)):(status().Set("Stored credential is missing its id or password."),Promise.resolve(null)):(status().Set("No stored credentials found."),Promise.resolve(null)));
+      let _3=credentialsContainer().get(credentialRequestOptions).then((a) =>!(a==null)?!(a.id==null)&&!(a.password==null)?(username().Set(a.id),password().Set(a.password),status().Set("Stored credentials loaded."),Promise.resolve(null)):(status().Set("Stored credential is missing its id or password."),Promise.resolve(null)):(status().Set("No stored credentials found."),Promise.resolve(null)));
       _2(_3);
-    })["catch"]((d) => {
-      const a=unwrapExn(d);
-      console.error("Failed to retrieve credentials: "+a.message);
-      status().Set("Could not retrieve credentials: "+a.message);
+    })["catch"]((a) => {
+      const a_1=unwrapExn(a);
+      console.error("Failed to retrieve credentials: "+a_1.message);
+      status().Set("Could not retrieve credentials: "+a_1.message);
       return Promise.resolve(null);
     }));
   });
@@ -76,10 +76,10 @@ function saveCredentials(userName, passWord){
       });
       let _4=_3;
       _2(_4);
-    })["catch"]((d) => {
-      const a=unwrapExn(d);
-      console.error("Failed to save credentials: "+a.message);
-      status().Set("Could not store credentials: "+a.message);
+    })["catch"]((a) => {
+      const a_1=unwrapExn(a);
+      console.error("Failed to save credentials: "+a_1.message);
+      status().Set("Could not store credentials: "+a_1.message);
       return Promise.resolve(null);
     }));
   });
@@ -3250,7 +3250,7 @@ class Event extends TemplateHole {
 }
 function Handler(name, callback){
   return Attr.A3((el) => {
-    el.addEventListener(name, (d) =>(callback(el))(d), false);
+    el.addEventListener(name, (o) =>(callback(el))(o), false);
   });
 }
 function OnAfterRender(callback){
@@ -3287,7 +3287,7 @@ function DynamicCustom(set_1, view){
 class Attr {
   static HandlerImpl(event, q){
     return Attr.A3((el) => {
-      el.addEventListener(event, (d) =>(q(el))(d), false);
+      el.addEventListener(event, (o) =>(q(el))(o), false);
     });
   }
   static Concat(xs){
