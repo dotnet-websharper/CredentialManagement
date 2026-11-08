@@ -35,6 +35,9 @@ module Definition =
 
     let Credential = 
         Class "Credential"
+        |+> Static [
+            "isConditionalMediationAvailable" => T<unit> ^-> T<Promise<bool>>
+        ]
         |+> Instance [
             "id" =? T<string>
             "type" =? Enum.CredentialTypes.Type
@@ -74,7 +77,9 @@ module Definition =
                 "signal", T<Dom.AbortSignal>
                 "federated", FederatedCredentialInit.Type
                 "password", PasswordCredentialInit.Type
-                //"publicKey", T<PublicKeyCredentialCreationOptions>
+                // The full PublicKeyCredentialCreationOptions graph is not modeled yet;
+                // accept a JS object so WebAuthn creation options can still be passed.
+                "publicKey", T<obj>
             ]
         }
 
@@ -91,6 +96,8 @@ module Definition =
         |=> Inherits Credential
         |+> Static [
             Constructor FederatedCredentialInitOptions?init
+            // FederatedCredential() also accepts the full FederatedCredentialInit dictionary.
+            Constructor FederatedCredentialInit?init
         ]
         |+> Instance [
             "protocol" =? T<string>
@@ -162,7 +169,9 @@ module Definition =
                 "identity", IdentityCredentialRequestOptions.Type
                 "federated", FederatedCredentialRequestOptions.Type
                 "otp", !| T<string> 
-                //"publicKey", T<PublicKeyCredentialRequestOptions>
+                // The full PublicKeyCredentialRequestOptions graph is not modeled yet;
+                // accept a JS object so WebAuthn request options can still be passed.
+                "publicKey", T<obj>
             ]
         }
 
@@ -181,22 +190,43 @@ module Definition =
             "code" =? T<string>
         ]
 
+    let PublicKeyCredential =
+        Class "PublicKeyCredential"
+        |=> Inherits Credential
+        |+> Static [
+            "isConditionalMediationAvailable" => T<unit> ^-> T<Promise<bool>>
+            "isUserVerifyingPlatformAuthenticatorAvailable" => T<unit> ^-> T<Promise<bool>>
+        ]
+        |+> Instance [
+            "authenticatorAttachment" =? T<string>
+            "rawId" =? T<JavaScript.ArrayBuffer>
+            // The AuthenticatorResponse object graph is part of the WebAuthn API and is
+            // not modeled here yet, so it is exposed as an opaque object.
+            "response" =? T<obj>
+            "getClientExtensionResults" => T<unit> ^-> T<obj>
+            "toJSON" => T<unit> ^-> T<obj>
+        ]
+
     let CredentialsContainer = 
         Class "CredentialsContainer"
         |+> Instance [
             "create" => !?CreateOptions?options ^-> T<Promise<_>>.[
                     FederatedCredential
                     + PasswordCredential
-                    //+ T<PublicKeyCredential>
+                    + PublicKeyCredential
                 ]
             "get" => !?CredentialRequestOptions?options ^-> T<Promise<_>>.[
                     PasswordCredential
                     + IdentityCredential
                     + FederatedCredential
                     + OTPCredential
-                    //+ T<PublicKeyCredential>
+                    + PublicKeyCredential
                 ]
             "preventSilentAccess" => T<unit> ^-> T<Promise<unit>>
+            // requireUserMediation() is the earlier spec name for preventSilentAccess();
+            // kept for source compatibility and marked obsolete.
+            "requireUserMediation" => T<unit> ^-> T<Promise<unit>>
+            |> ObsoleteWithMessage "requireUserMediation() is the older name for preventSilentAccess(); use preventSilentAccess() instead."
             "store" => Credential?credentials ^-> T<Promise<unit>>
         ]
 
@@ -208,6 +238,7 @@ module Definition =
                 Enum.Mediation
 
                 CredentialsContainer
+                PublicKeyCredential
                 OTPCredential
                 IdentityCredential
                 CredentialRequestOptions
