@@ -15,15 +15,16 @@
 </head>
 <body>
     <h1>Credential Management API Example</h1>
-    <div id="main" ws-children-template="Main" >
-        <form id="loginForm" ws-onclick="Submit" ws-onafterrender="formInit">
-            <label >Username:</label>
-            <input ws-var="Username" type="text" id="username" required >
+    <div id="main" ws-children-template="Main">
+        <form id="loginForm" ws-onsubmit="Submit">
+            <label>Username:</label>
+            <input ws-var="Username" type="text" id="username" autocomplete="username" required>
             <br><br>
-            <label >Password:</label>
-            <input ws-var="Password" type="password" id="password" required>
+            <label>Password:</label>
+            <input ws-var="Password" type="password" id="password" autocomplete="current-password" required>
             <br><br>
             <button type="submit">Login</button>
+            <p id="status">${Status}</p>
         </form>
     </div>
     <script type="module" src="Content/WebSharper.CredentialManagement.Sample.min.js"></script>
